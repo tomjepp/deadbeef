@@ -343,23 +343,24 @@ extern DB_functions_t *deadbeef;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
 
-    int rowheight = 18;
+    //int rowheight = 18;
+    CGFloat fontSize = 13.5;
 
     self.groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                     [NSFont systemFontOfSize:fontSize*1.5 weight:NSFontWeightLight], NSFontAttributeName
                                  , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                  , NSColor.controlTextColor, NSForegroundColorAttributeName
                                  , textStyle, NSParagraphStyleAttributeName
                                  , nil];
 
     self.cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                [NSFont controlContentFontOfSize:fontSize], NSFontAttributeName
                                 , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                 , NSColor.controlTextColor, NSForegroundColorAttributeName
                                 , textStyle, NSParagraphStyleAttributeName
                                 , nil];
 
-    self.cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+    self.cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:fontSize], NSFontAttributeName
                                         , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                         , NSColor.alternateSelectedControlTextColor, NSForegroundColorAttributeName
                                         , textStyle, NSParagraphStyleAttributeName
@@ -678,15 +679,21 @@ extern DB_functions_t *deadbeef;
 - (void)drawCell:(NSUInteger)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     NSColor *background = NSColor.controlBackgroundColor;
-    if (sel) {
+    if (sel && _columns[col].type != DB_COLUMN_ALBUM_ART) {
         if (focused) {
             [NSColor.alternateSelectedControlColor set];
             background = NSColor.alternateSelectedControlColor;
             [NSBezierPath fillRect:rect];
         }
         else {
-            [NSColor.controlShadowColor set];
-            background = NSColor.controlShadowColor;
+            if (@available(macOS 10.14, *)) {
+                [NSColor.unemphasizedSelectedTextBackgroundColor set];
+                background = NSColor.unemphasizedSelectedTextBackgroundColor;
+            } else {
+                [NSColor.controlShadowColor set];
+                background = NSColor.controlShadowColor;
+            }
+            
             [NSBezierPath fillRect:rect];
         }
     }
@@ -755,6 +762,7 @@ extern DB_functions_t *deadbeef;
 
         rect.origin.x += CELL_HPADDING;
         rect.size.width -= CELL_HPADDING;
+        rect.origin.y += 2;
 
         if (text[0]) {
             NSDictionary *attributes = sel?self.cellSelectedTextAttrsDictionary:self.cellTextAttrsDictionary;
