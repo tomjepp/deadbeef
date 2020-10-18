@@ -20,8 +20,8 @@ extern DB_functions_t *deadbeef;
 
 #define BLANK_GROUP_SUBDIVISION 100
 
-static int rowheight = 19;
-static int grouptitleheight = 22;
+static int rowheight = 20;
+static int grouptitleheight = 34;
 
 @interface PlaylistContentView ()
 
@@ -246,7 +246,7 @@ static int grouptitleheight = 22;
         int w = [self.delegate columnWidth:col];
 
         if ([self.delegate isAlbumArtColumn:col] && x + w > clip.origin.x) {
-            NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
+            NSColor *clr = NSColor.clearColor;
             [clr set];
             [NSBezierPath fillRect:NSMakeRect (x, y, w, grp_next_y - y)];
             if (title_height > 0) {
@@ -262,7 +262,7 @@ static int grouptitleheight = 22;
 - (void)drawGroupTitle:(DdbListviewGroup_t *)grp grp_y:(int)grp_y title_height:(int)title_height {
     id<DdbListviewDelegate> delegate = self.delegate;
     NSRect groupRect = NSMakeRect(0, grp_y, self.frame.size.width, title_height);
-    NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:0];
+    NSColor *clr = NSColor.clearColor;
     [clr set];
 #if DEBUG_DRAW_GROUP_TITLES
     [NSColor.greenColor set];
@@ -382,15 +382,17 @@ static int grouptitleheight = 22;
 
             if (yy + rowheight >= clip_y) {
                 // draw row
-                NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:ii % 2];
+                NSColor *clr = NSColor.clearColor;
                 [clr set];
                 [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, yy, dirtyRect.size.width, rowheight)];
 
+                int first_col_width = [self.delegate columnWidth:[self.delegate firstColumn]];
+                
                 int x = 0;
                 for (DdbListviewCol_t col = [self.delegate firstColumn]; col != [self.delegate invalidColumn]; col = [self.delegate nextColumn:col]) {
                     int w = [self.delegate columnWidth:col];
                     if (CGRectIntersectsRect(dirtyRect, NSMakeRect(x, yy, w, rowheight))) {
-                        [self.delegate drawCell:idx+i forRow: it forColumn:col inRect:NSMakeRect(x, yy, w, rowheight-1) focused:focused];
+                        [self.delegate drawCell:idx+i forRow: it forColumn:col inRect:NSMakeRect(x, yy, w, rowheight-1) focused: col == [self.delegate firstColumn] ? false : focused];
                     }
                     x += w;
                 }
@@ -401,7 +403,7 @@ static int grouptitleheight = 22;
 
                 if (it == cursor_it) {
                     [[NSGraphicsContext currentContext] saveGraphicsState];
-                    NSRect rect = NSMakeRect(self.frame.origin.x+0.5, yy+0.5, self.frame.size.width-1, rowheight-1);
+                    NSRect rect = NSMakeRect(first_col_width + self.frame.origin.x+0.5, yy+0.5, self.frame.size.width-(1 + first_col_width), rowheight-1);
                     NSBezierPath.defaultLineWidth = 1.f;
                     [NSColor.textColor set];
                     [NSBezierPath strokeRect:rect];
@@ -463,7 +465,7 @@ static int grouptitleheight = 22;
         int ii = [self.delegate rowCount]+1;
         while (y < dirtyRect.origin.y + dirtyRect.size.height) {
             if (y + rowheight >= dirtyRect.origin.y) {
-                NSColor *clr = [NSColor.controlAlternatingRowBackgroundColors objectAtIndex:ii % 2];
+                NSColor *clr = NSColor.clearColor;
                 [clr set];
                 [NSBezierPath fillRect:NSMakeRect(dirtyRect.origin.x, y, dirtyRect.size.width, rowheight)];
             }

@@ -726,15 +726,21 @@ extern DB_functions_t *deadbeef;
 - (void)drawCell:(int)idx forRow:(DdbListviewRow_t)row forColumn:(DdbListviewCol_t)col inRect:(NSRect)rect focused:(BOOL)focused {
     int sel = deadbeef->pl_is_selected((DB_playItem_t *)row);
     NSColor *background = NSColor.controlBackgroundColor;
-    if (sel) {
+    if (sel && _columns[col].type != DB_COLUMN_ALBUM_ART) {
         if (focused) {
             [NSColor.alternateSelectedControlColor set];
             background = NSColor.alternateSelectedControlColor;
             [NSBezierPath fillRect:rect];
         }
         else {
-            [NSColor.controlShadowColor set];
-            background = NSColor.controlShadowColor;
+            if (@available(macOS 10.14, *)) {
+                [NSColor.unemphasizedSelectedTextBackgroundColor set];
+                background = NSColor.unemphasizedSelectedTextBackgroundColor;
+            } else {
+                [NSColor.controlShadowColor set];
+                background = NSColor.controlShadowColor;
+            }
+            
             [NSBezierPath fillRect:rect];
         }
     }
