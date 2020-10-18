@@ -338,23 +338,24 @@ extern DB_functions_t *deadbeef;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
 
-    int rowheight = 18;
+    //int rowheight = 18;
+    CGFloat fontSize = 13.5;
 
     self.groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                     [NSFont systemFontOfSize:fontSize*1.5 weight:NSFontWeightLight], NSFontAttributeName
                                  , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                  , NSColor.controlTextColor, NSForegroundColorAttributeName
                                  , textStyle, NSParagraphStyleAttributeName
                                  , nil];
 
     self.cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+                                [NSFont controlContentFontOfSize:fontSize], NSFontAttributeName
                                 , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                 , NSColor.controlTextColor, NSForegroundColorAttributeName
                                 , textStyle, NSParagraphStyleAttributeName
                                 , nil];
 
-    self.cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
+    self.cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:fontSize], NSFontAttributeName
                                         , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
                                         , NSColor.alternateSelectedControlTextColor, NSForegroundColorAttributeName
                                         , textStyle, NSParagraphStyleAttributeName
