@@ -762,7 +762,7 @@ extern DB_functions_t *deadbeef;
 
         rect.origin.x += CELL_HPADDING;
         rect.size.width -= CELL_HPADDING;
-        rect.origin.y += 2;
+        rect.origin.y += 1;
 
         if (text[0]) {
             NSDictionary *attributes = sel?self.cellSelectedTextAttrsDictionary:self.cellTextAttrsDictionary;
